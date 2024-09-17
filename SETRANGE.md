@@ -109,10 +109,12 @@ if CustomerRec.FINDFIRST then begin
     // Process first customer
 end;
 ```
-Summary Table:
-Method	| Use Case	Returns Multiple Records?	| Example Use
-SETRANGE|	Exact value or range filtering	No |	SETRANGE("Country Code", 'US')
-SETFILTER |	Complex conditions (wildcards, inequality)	No |	SETFILTER("Name", '*Bike*')
-FINDSET |	Loop through multiple records	Yes	| Loop through customers in a region
-FINDNEXT	| Move to the next record in a set	Yes (within loop)	| Retrieve next record in a set
-FINDFIRST |	Fetch the first record that matches filters	No |	Get the first customer
+## Summary Table for SETRANGE, SETFILTER, FINDSET, FINDNEXT, and FINDFIRST
+
+| **Method**   | **Use Case**                                 | **Returns Multiple Records?** | **Example Use**                          |
+|--------------|----------------------------------------------|------------------------------|------------------------------------------|
+| **SETRANGE** | Exact value or range filtering               | No                           | `SETRANGE("Country Code", 'US')`         |
+| **SETFILTER**| Complex conditions (wildcards, inequality)   | No                           | `SETFILTER("Name", '*Bike*')`            |
+| **FINDSET**  | Loop through multiple records                | Yes                          | Loop through customers in a region       |
+| **FINDNEXT** | Move to the next record in a set (within loop)| Yes (in loop)                | Retrieve next record in a set            |
+| **FINDFIRST**| Fetch the first record that matches filters  | No                           | Get the first customer                   |

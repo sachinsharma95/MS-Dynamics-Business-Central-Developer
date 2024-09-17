@@ -10,8 +10,6 @@
     SourceTable = "Employee Table";
     Caption = 'Action Practice Page';
     PromotedActionCategories = ',,,Custom,,Sachin';
-
-
     layout
     {
         area(Content)
@@ -22,7 +20,6 @@
                 {
                     ApplicationArea = all;
                 }
-
             }
             group(List)
             {
@@ -33,14 +30,10 @@
             }
         }
     }
-
     actions
     {
-
-
-        // area(Processing)
+      // area(Processing)
         // {
-
         //     action("Display Message")
         //     {
         //         ApplicationArea = All;
@@ -59,12 +52,7 @@
         //             Message('Button1 Working');
         //         end;
         //     }
-
-
         // }
-
-
-
         area(Navigation)
         {
             action("nav Message")
@@ -102,11 +90,8 @@
                     RunObject = page "Customer card";
                     trigger OnAction()
                     begin
-                        // Code to create a new record
-
-                    end;
-                }
-
+                        // Code to create a new record 
+                        end;    }
                 action(EditRecord)
                 {
                     ApplicationArea = All;
@@ -118,7 +103,6 @@
                         Message('Edit Button');
                     end;
                 }
-
                 action(DeleteRecord)
                 {
                     ApplicationArea = All;
@@ -135,18 +119,18 @@
     }
 
 
-    // trigger OnOpenPage()
+  // trigger OnOpenPage()
     // begin
     //     Message('Op Open Trigger working fine');
     // end;
 
-    // trigger OnClosePage()
+  // trigger OnClosePage()
     // begin
     //     Message('Page closed successfully !');
 
-    // end;
+  // end;
 
-    // trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+  // trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     // begin
     //     Message('Record Inserted successfully!');
     // end;

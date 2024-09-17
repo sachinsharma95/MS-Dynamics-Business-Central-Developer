@@ -2,7 +2,7 @@
 
 
 
-# SETRANGE, SETFILTER, FINDFORST, FINDSET, FINDENEXT
+# SETRANGE, SETFILTER, FINDFIRST, FINDSET, FINDENEXT
 
 ## 1. SETRANGE
 - **Description**: `SETRANGE` is used to set a filter on a field for a specific range of values or an exact match.

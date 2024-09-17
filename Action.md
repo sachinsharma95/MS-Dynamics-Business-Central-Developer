@@ -3,7 +3,7 @@
 
   ```al
   page 50708 "Action Page"
-{
+  {
     PageType = Document;
     ApplicationArea = All;
     UsageCategory = Administration;
@@ -135,5 +135,5 @@
     //     Message('Record Inserted successfully!');
     // end;
 
-}
+  }
 ```

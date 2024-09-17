@@ -13,7 +13,7 @@
   Rec.SETRANGE(Field, FromValue, ToValue); // Range of values
   ```
 ### Fethcing the data from Customer table to sale header where Location code = EAST , using the SETRANGE function.
-```
+```al
 var
 
                     Customer_rec: Record Customer; // Taking data from the customer so we are makign the record var of Customer 
@@ -39,7 +39,7 @@ Copy code
 Rec.SETFILTER(Field, 'Condition', Value);
 ```
 # EXample not Equalt to EAST CODE
-```
+```al
 var
 
                     Customer_rec: Record Customer; // Taking data from the customer

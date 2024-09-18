@@ -133,354 +133,218 @@ table 50505 "SO Import Excel Buffer Table"
 ```
 ### Worksheet Page
 ```al
-pageextension 50502 "Sale Order Extension" extends "Sales Order"
+page 50605 "So Import Excel Worksheet Page"
 {
-    PromotedActionCategories = ',,,Custom Button';
+    AutoSplitKey = true;
+    PageType = Worksheet;
+    ApplicationArea = All;
+    Caption = 'So Import Worksheet';
+    DelayedInsert = true;
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    SaveValues = true;
+    UsageCategory = Tasks;
+    SourceTable = "SO Import Excel Buffer Table";
+    SourceTableView = sorting("Batch Name", "Line No");
+
     layout
     {
-        // Add changes to page layout here
-        addafter("Posting Date")
+        area(Content)
         {
-            field("Pro Formal No."; Rec."Pro Formal No.")
+            field(BatchName; BatchName)
             {
                 ApplicationArea = all;
+                Caption = 'BatchName';
             }
-            field("Provisional No."; Rec."Provisional No.")
+            repeater(Group)
             {
-                ApplicationArea = all;
-            }
-            field("CIN No."; Rec."CIN No.")
-            {
-                ApplicationArea = all;
-            }
-            field("Total Amt"; Rec."Total Amt")
-            {
-                ApplicationArea = all;
-            }
-            field("Customer Amt"; Rec."Customer Amt")
-            {
-                ApplicationArea = all;
-            }
-            field("Payment Amt sum"; Rec."Payment Amt sum")
-            {
-                ApplicationArea = all;
+                Editable = false;
+                field("Batch Name"; REC."Batch Name")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+
+                }
+                field("Line No"; Rec."Line No")
+                {
+                    ApplicationArea = all;
+                    Visible = False;
+                }
+                field("Document No"; Rec."Document No")
+                {
+                    ApplicationArea = all;
+                }
+                field("Sell-to Customer No."; Rec."Sell-to Customer No.")
+                {
+                    ApplicationArea = all;
+                }
+                field("Posting Date"; Rec."Posting Date")
+                {
+                    ApplicationArea = all;
+                }
+                field("Currency code"; Rec."Currency code ")
+                {
+                    ApplicationArea = all;
+                }
+                field("Document Date"; Rec."Document Date")
+                {
+                    ApplicationArea = all;
+                }
+                field("External Document No."; Rec."External Document No.")
+                {
+                    ApplicationArea = all;
+                }
+                field(Type; Rec.Type)
+                {
+                    ApplicationArea = all;
+                }
+                field("No."; Rec."No.")
+                {
+                    ApplicationArea = all;
+                }
+                field(Quantity; Rec.Quantity)
+                {
+                    ApplicationArea = all;
+                }
+                field("Unit Price"; Rec."Unit Price")
+                {
+                    ApplicationArea = all;
+                }
+
+                field("File Name"; Rec."File Name")
+                {
+                    ApplicationArea = all;
+                }
+                field("Sheet Name"; Rec."Sheet Name")
+                {
+                    ApplicationArea = all;
+                }
+                field("Imported Date"; Rec."Imported Date")
+                {
+                    ApplicationArea = all;
+                }
+                field("Imported Time"; Rec."Imported Time")
+                {
+                    ApplicationArea = all;
+                }
             }
         }
     }
 
     actions
     {
-
-        addafter("F&unctions")
+        area(Processing)
         {
-            action(CurrYear)
+            action("&Import")
             {
                 ApplicationArea = All;
-                Caption = 'Get year & Week  ';
+                Caption = '&Import';
                 Promoted = true;
-                // PromotedOnly = true;
-                PromotedCategory = Category4;
-                trigger OnAction()
-                begin
-                    GetCurrentYEar(Rec."Posting Date");
+                PromotedCategory = Process;
+                ToolTip = 'Importing the Data from Excel';
 
-                end;
-            }
-
-        }
-        // Add changes to page actions here
-
-        addbefore(CurrYear)
-        {
-            action("Month Date")
-            {
-                ApplicationArea = all;
-                Promoted = true;
-                PromotedCategory = Category5;
-                Caption = 'Month Date';
-                trigger OnAction()
-                begin
-                    GetMonth(Rec."Posting Date");
-                end;
-            }
-        }
-
-        addbefore("Month Date")
-        {
-            action("Month Name")
-            {
-                ApplicationArea = all;
-                Promoted = true;
-                PromotedCategory = Category6;
-                Caption = 'Month Name';
-
-                trigger OnAction()
-                begin
-                    GetMonth_Name(Rec."Posting Date");
-                end;
-
-            }
-
-        }
-        addafter("Month Name")
-        {
-            action("Get Cutomer Amt")
-            {
-                ApplicationArea = all;
-                Promoted = true;
-
-                PromotedCategory = Category6;
                 trigger OnAction()
                 var
-
-                    Customer_rec: Record Customer; // Taking data from the customer
-
                 begin
-                    Customer_rec.Reset();
-                    Customer_rec.SetRange("No.", Rec."Sell-to Customer No.");// Applying fiter on the Customer
-                    Customer_rec.SetFilter("Location Code", '<>EAST');
+                    if BatchName = '' then
+                        Error(BatchIsBlankmsg);
+                    ReadExcelsheet();
+                    ImportExcelData();
 
-                    // Customer_rec.SetRange("Location Code", 'EAST'); // based on EAST Location code filter
-                    if Customer_rec.FindFirst() then begin
-                        Rec."Customer Amt" := Customer_rec."Credit Limit (LCY)";
-                        Rec.Validate("Customer Amt", Customer_rec."Credit Limit (LCY)");
-                    end;
+
 
 
                 end;
             }
         }
-        // Task Another Check Status of Pending of the CUstomer and Order Date 
-
-        addafter("Get Cutomer Amt")
-        {
-            action("Check Status")
-            {
-                ApplicationArea = all;
-                Promoted = true;
-
-                // PromotedCategory = Category6;
-                trigger OnAction()
-                var
-                    SaleHeaderREC: Record "Sales Header";
-                begin
-                    SaleHeaderREC.reset();
-                    SaleHeaderREC.SetFilter(SaleHeaderREC.Status, 'Released');
-                    if SaleHeaderREC.FindSet() then begin
-                        // repeat
-                        Message('The Cust Name of Pending Status is: %1  \ Order Date is : %2', SaleHeaderREC."Bill-to Name", SaleHeaderREC."Order Date");
-                        // until SaleHeaderREC.Next() = 0;
-                    end;
-                end;
-            }
-        }
-        //   SETFILTER TASK
-
-        addafter("Check Status")
-        {
-            action("Filter Based on Credit Limit")
-            {
-                ApplicationArea = all;
-                Promoted = true;
-                trigger OnAction()
-                var
-                    CustomerRec: Record Customer;
-                begin
-                    // Set a filter on Country and Credit Limit
-                    CustomerRec.SETRANGE("Country/Region Code", 'US');
-                    CustomerRec.SETFILTER("Credit Limit (LCY)", '>10000');
-
-                    // Find and loop through the filtered customers
-                    if CustomerRec.FINDFIRST then begin
-                        repeat
-                            Message('Customer No.: %1\ Name: %2\ Credit Limit: %3',
-                                CustomerRec."No.", CustomerRec.Name, CustomerRec."Credit Limit (LCY)");
-                        until CustomerRec.Next() = 0;
-                    end else begin
-                        Message('No customers found in US with Credit Limit greater than 10,000.');
-                    end;
-                end;
-
-
-            }
-
-
-        }
-
-
-        // Modify Task Completed
-
-        modify(Post)
-        {
-            trigger OnBeforeAction()
-
-            begin
-                if Rec."Customer Amt" = 0 then
-                    Error('Customer AMt should bne grater than 0.');
-            end;
-        }
-
     }
-    // task1
-    local procedure GetCurrentYEar(GivenDate: Date)
+
     var
-        ThisYearStartDate: Date;
-        ThisYearEndDate: Date;
-        ThisweekStarDate: Date;
-        ThisweekEndDate: Date;
-        PreviousWeekStartDate: Date;
-        Month: Integer;
-        YearMsg: Label 'This year: %1 ~ %2\This Week: %3 ~ %4';
-        Monthmsg: Label 'month is: %5';
+        BatchName: Code[10];
+        FileName: Text[100];
+        SheetName: Text[100];
+        TempExcelBuffer: Record "Excel Buffer" temporary;
+        UploadExcelmsg: Label 'Please choose Excel file';
+        NoFileFoundmsg: Label 'No Excel File Found !';
+        BatchIsBlankmsg: Label 'Batch Name is Blank';
+        ExcelImportSuccess: Label 'Excel Successfully Imported';
 
-    begin
-        ThisYearStartDate := CalcDate('<-CY>', GivenDate);
-        ThisYearEndDate := CalcDate('CY', GivenDate);
-        ThisweekStarDate := CalcDate('<-CW>', GivenDate);
-        ThisweekEndDate := CalcDate('<CW>', GivenDate);
-
-
-        Message(YearMsg, ThisYearStartDate, ThisYearEndDate, ThisweekStarDate, ThisweekEndDate);
-    end;
-    // Get MonthDate throgh the calcDate Formula .
-    // Task2s
-    local procedure GetMonth(GivenDate1: Date)
+    // Read Excel Sheet Procedure
+    local procedure ReadExcelsheet()
     var
-        ThisMonthStartDate: Date;
-        ThisMonthENdDate: Date;
-
-        LastMonthStartDate: Date;
-        LastMonthEndDate: Date;
-
-        NextMonthStartDate: Date;
-        NextmonthEndDate: Date;
-        Month: Integer;
-        monthmsg: Label 'This MonthDate : %1 ~ %2 \ LastMonth Date : %3 ~%4\Next Month: %5 ~%6';
-
-
-
-
+        Filemgt: Codeunit "File Management";
+        Istream: InStream;
+        FromFile: Text[100];
     begin
-        ThisMonthStartDate := CalcDate('<-CM>', GivenDate1);
-        ThisMonthENdDate := CalcDate('<CM>', GivenDate1);
+        UploadIntoStream(UploadExcelMsg, '', '', FromFile, IStream);
+        if FromFile <> '' then begin
+            FileName := Filemgt.GetFileName(FromFile);
+            SheetName := TempExcelBuffer.SelectSheetsNameStream(Istream)
 
-        LastMonthStartDate := CalcDate('<-CM-1M>', GivenDate1);
-        LastMonthEndDate := CalcDate('<CM-1M>', GivenDate1);
+        end else
+            Error(NoFileFoundmsg);
+        TempExcelBuffer.Reset();
+        TempExcelBuffer.DeleteAll();
+        TempExcelBuffer.OpenBookStream(Istream, SheetName);
+        TempExcelBuffer.ReadSheet();
 
-        NextMonthStartDate := CalcDate('<-CM+1M>', GivenDate1);
-        NextmonthEndDate := CalcDate('<CM+1M>', GivenDate1);
-
-
-        Message(monthmsg, ThisMonthStartDate, ThisMonthENdDate, LastMonthStartDate, LastMonthEndDate, NextMonthStartDate, NextmonthEndDate);
 
     end;
-
-
-    // get Day, Month , Year Based on the Date 
-    local procedure GetMonth_Name(GivenDate1: Date)
+    // import Excel Data
+    local procedure ImportExcelData()
     var
-        Day: Integer;
-        Month: Integer;
-        Year: Integer;
-        Format: Text;
-        monthmsg: Label 'The Daye  of the given Date is :%1 \The month of the given date is: %2 \ The year of the Given Date is: %3\DATE IN TEXT:%4';
+        SOImportBuffer: Record "SO Import Excel Buffer Table";
+        RowNo: Integer;
+        ColNo: Integer;
+        LineNo: Integer;
+        MaxRowNo: Integer;
     begin
-        // Extract the month directly from the Posting Date
-        Day := Date2DMY(GivenDate1, 1); // Extract Daye
+        RowNo := 0;
+        ColNo := 0;
+        MaxRowNo := 0;
+        LineNo := 0;
+        SOImportBuffer.Reset();
+        if SOImportBuffer.FindLast() then
+            LineNo := SOImportBuffer."Line No";
+        TempExcelBuffer.Reset();
+        if TempExcelBuffer.FindLast() then begin
+            MaxRowNo := TempExcelBuffer."Row No.";
+        end;
 
-        Month := Date2DMY(GivenDate1, 2); // 2 for extracting the month
-        Year := Date2DMY(GivenDate1, 3);// Extract Year 
-        Format := FORMAT(GivenDate1, 1);
-
-        // Show the extracted month in a message
-        Message(monthmsg, Day, Month, Year, Format);
+        for RowNo := 2 to MaxRowNo do begin
+            LineNo := LineNo + 10000;
+            SOImportBuffer.Init();
+            Evaluate(SOImportBuffer."Batch Name", BatchName);
+            SOImportBuffer."Line No" := LineNo;
+            Evaluate(SOImportBuffer."Document No", GetValueAtCell(RowNo, 1));
+            Evaluate(SOImportBuffer."Sell-to Customer No.", GetValueAtCell(RowNo, 2));
+            Evaluate(SOImportBuffer."Posting Date", GetValueAtCell(RowNo, 3));
+            Evaluate(SOImportBuffer."Currency code ", GetValueAtCell(RowNo, 4));
+            Evaluate(SOImportBuffer."Document Date", GetValueAtCell(RowNo, 5));
+            Evaluate(SOImportBuffer."External Document No.", GetValueAtCell(RowNo, 6));
+            Evaluate(SOImportBuffer.Type, GetValueAtCell(RowNo, 7));
+            Evaluate(SOImportBuffer."No.", GetValueAtCell(RowNo, 8));
+            Evaluate(SOImportBuffer.Quantity, GetValueAtCell(RowNo, 9));
+            Evaluate(SOImportBuffer."Unit Price", GetValueAtCell(RowNo, 10));
+            SOImportBuffer."Sheet Name" := SheetName;
+            SOImportBuffer."File Name" := FileName;
+            SOImportBuffer."Imported Date" := Today;
+            SOImportBuffer."Imported Time" := Time;
+            SOImportBuffer.Insert();
+        end;
+        Message(ExcelImportSuccess);
     end;
-    //  Show Name from Sale header WHo Status Released
-    // Onopen Page trigger 
-    trigger OnOpenPage()
-    var
-        SaleHeaderREC: Record "Sales Header";
 
+    local procedure GetValueAtCell(RowNo: Integer; ColNo: Integer): Text
     begin
-        // SaleHeaderREC.reset();
-        // SaleHeaderREC.SetFilter(SaleHeaderREC.Status, 'Released');
-        // if SaleHeaderREC.FindSet() then begin
-        //     // repeat
 
-        //     // until SaleHeaderREC.Next() = 0;
-        // end;
-        rec.SetFilter(Status, 'Released');
+        TempExcelBuffer.Reset();
+        If TempExcelBuffer.Get(RowNo, ColNo) then
+            exit(TempExcelBuffer."Cell Value as Text")
+        else
+            exit('');
     end;
 }
 
+
 ```
-
-## Logic Explanation 
-# AL Code: ReadExcelSheet Procedure
-
-This AL (Application Language) code is used in Microsoft Dynamics 365 Business Central to read an Excel sheet and process its data.
-
-## Code Breakdown
-
-```al
-local procedure ReadExcelSheet()
-    var
-        FileMgt: Codeunit "File Management";
-        IStream: InStream;
-        FromFile: Text[100];
-local procedure ReadExcelSheet(): This defines a local procedure called ReadExcelSheet. A procedure is like a function that performs a specific task.
-var: This defines variables that will be used in the procedure:
-FileMgt: A variable of type Codeunit "File Management". It is used to manage file operations (like opening files).
-IStream: This is of type InStream. It is a data stream that will be used to read data from the uploaded file.
-FromFile: A text variable (maximum length of 100 characters) to store the name or path of the uploaded file.
-al
-Copy code
-begin
-    UploadIntoStream(UploadExcelMsg, '', '', FromFile, IStream);
-UploadIntoStream(UploadExcelMsg, '', '', FromFile, IStream):
-This uploads an Excel file and stores it as a stream (IStream).
-UploadExcelMsg is a message that is displayed to the user while selecting the file.
-FromFile will store the file name (or path) of the uploaded file, and IStream will receive the file's content.
-al
-Copy code
-    if FromFile <> '' then begin
-if FromFile <> '' then: This checks if a file has been uploaded (i.e., if FromFile is not an empty string). If a file has been uploaded, the next steps are executed; otherwise, it throws an error.
-al
-Copy code
-        FileName := FileMgt.GetFileName(FromFile);
-        SheetName := TempExcelBuffer.SelectSheetsNameStream(IStream);
-FileName := FileMgt.GetFileName(FromFile):
-This gets the name of the uploaded file using the File Management codeunit.
-SheetName := TempExcelBuffer.SelectSheetsNameStream(IStream):
-This selects the sheet name from the Excel file. It uses TempExcelBuffer (which is another codeunit or table related to Excel data) to read the sheet names from the uploaded file's data stream (IStream).
-al
-Copy code
-    end else
-        Error(NoFileFoundMsg);
-else Error(NoFileFoundMsg): If no file is uploaded (i.e., FromFile is empty), it raises an error using NoFileFoundMsg, which is a predefined message like "No file found".
-al
-Copy code
-    TempExcelBuffer.Reset();
-    TempExcelBuffer.DeleteAll();
-TempExcelBuffer.Reset(): Resets the TempExcelBuffer so that it can be used fresh, clearing any previous filters or temporary data.
-
-TempExcelBuffer.DeleteAll(): Deletes all existing data in the TempExcelBuffer to ensure that it starts empty when new Excel data is read.
-
-al
-Copy code
-    TempExcelBuffer.OpenBookStream(IStream, SheetName);
-TempExcelBuffer.OpenBookStream(IStream, SheetName):
-This opens the Excel workbook stream (IStream) and selects the specified sheet (SheetName) for reading.
-al
-Copy code
-    TempExcelBuffer.ReadSheet();
-end;
-TempExcelBuffer.ReadSheet(): Reads the data from the selected Excel sheet into the TempExcelBuffer. This allows further processing of the data, such as using it in the Business Central system.
-Summary:
-This code is designed to upload an Excel file, select a sheet, and read the data from that sheet into a buffer (TempExcelBuffer). It performs the following steps:
-
-Uploads an Excel file.
-Verifies if the file is uploaded.
-Gets the file name and selects a sheet from the file.
-Clears any previous data from the buffer.
-Opens the sheet and reads the data from it.

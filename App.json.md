@@ -1,6 +1,6 @@
 This **app.json** file is the configuration file for an AL extension in **Microsoft Dynamics 365 Business Central**. It defines important metadata about the extension, including its version, publisher, dependencies, and various settings.
 ## App.json
-```al
+```.json
 {
   "id": "6bbdbcf4-aa0b-4f13-bcbb-f0aa5fd4f40d",
   "name": "Project2",

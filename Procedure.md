@@ -89,23 +89,25 @@ else
     // Code to execute if No
 Example:
 
-al
+```al
 Copy code
 if CONFIRM('Do you want to post this order?') then
     PostOrder;
 else
     MESSAGE('Posting canceled.');
+```
+```al
 STRMENU Procedure
 Displays a menu with multiple options for the user to select.
 
 Syntax:
 
-al
+```al
 Copy code
 Choice := STRMENU('Option 1, Option 2, Option 3', DefaultOption);
 Example:
-
-al
+```
+```al
 Copy code
 Choice := STRMENU('Edit, View, Delete', 1);
 if Choice = 1 then

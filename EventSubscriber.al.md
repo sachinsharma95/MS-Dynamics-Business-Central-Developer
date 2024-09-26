@@ -1,4 +1,3 @@
-Here's a detailed **README** file with a clear table differentiating **Actions** and **Event Subscribers**, along with code snippets for both. This README is structured for GitHub, making it easy for others to understand and implement in their Microsoft Dynamics 365 Business Central projects.
 
 ---
 

@@ -1,4 +1,4 @@
-<centre> ## No SERIES GENERATION.
+ ## <centre> No SERIES GENERATION.
 
 #### Steps:
 -------

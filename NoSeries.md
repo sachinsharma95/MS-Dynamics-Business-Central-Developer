@@ -3,7 +3,7 @@
 #### Steps:
 -------
 Step1 Ceate a Field in Purchase & Payable by page extension.
-```
+```al
 pageextension 50510 "No Series" extends "Purchases & Payables Setup"
 {
     layout
@@ -25,7 +25,8 @@ pageextension 50510 "No Series" extends "Purchases & Payables Setup"
 
 Make Table and Pages (list).
 Make field ENtry No 
-```table 50509 "Purchase order No Series "
+```al
+table 50509 "Purchase order No Series "
 {
     DataClassification = ToBeClassified;
     Caption = 'No Series Purchase Order';
@@ -132,7 +133,8 @@ Make field ENtry No
 ```
 ## PAesg 
 
-```page 50607 "Purchase order No Series"
+```al
+page 50607 "Purchase order No Series"
 {
     PageType = List;
     ApplicationArea = All;
@@ -227,7 +229,7 @@ Make field ENtry No
 }
 ```
 ## Logics::
-```
+```al
   var
         PurchSetup: Record "Purchases & Payables Setup";
 

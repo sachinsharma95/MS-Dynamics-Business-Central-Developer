@@ -1,4 +1,5 @@
 ## Export Customer Ledger Entry Data in the CSV File
+### It is By Using the Text Builder 
 
 ----
 ```al
@@ -10,58 +11,35 @@ codeunit 50506 "Export CSV Buffer Codeunit"
         OutStream: OutStream;
         InStream: InStream;
         TempBlob: Codeunit "Temp Blob";
-        CSVFileName: Text;
-        Line: Text;
         FileName: Text;
+        TextBuilder: TextBuilder;
+
+
+
     begin
         // Set the CSV file name
-        CSVFileName := StrSubstNo('Customer_Ledger_Entries_%1_%2.csv', CurrentDateTime, UserId);
+        FileName := 'TestFile' + UserId + '_' + Format(CurrentDateTime) + '.txt';
+
+        TextBuilder.AppendLine('Entry No' + ',' + 'PostingDate' + ',' + 'Document Type' + ',' + 'Document No' + ',' + 'Customer No' + ',' + 'Customer Name' + ',' + 'Description' + ',' + 'Currency Code' + ',' + 'Original Amount');
+        CustledgerRec.Reset();
+        CustledgerRec.SetAutoCalcFields(Amount);
+
+        if CustledgerRec.FindSet() then
+            repeat
+
+                TextBuilder.AppendLine(Format(CustledgerRec."Entry No.") + ',' + Format(CustledgerRec."Posting Date") + ',' + Format(CustledgerRec."Document Type") + ',' + CustledgerRec."Document No." + ',' + CustledgerRec."Customer No." + ',' + CustledgerRec."Customer Name" + ',' + CustledgerRec.Description + ',' + Format(CustledgerRec."Currency Code") + ',' + Format(CustledgerRec."Original Amount"));
+            until CustledgerRec.Next() = 0;
 
         // Create a temporary blob and get the output stream
         TempBlob.CreateOutStream(OutStream);
-
-        // Write the header (column names) to the CSV file
-        Line := CustledgerRec.FieldCaption("Entry No.") + ',' +
-                CustledgerRec.FieldCaption("Posting Date") + ',' +
-                CustledgerRec.FieldCaption("Document Type") + ',' +
-                CustledgerRec.FieldCaption("Document No.") + ',' +
-                CustledgerRec.FieldCaption("Customer No.") + ',' +
-                CustledgerRec.FieldCaption("Customer Name") + ',' +
-                CustledgerRec.FieldCaption(Description) + ',' +
-                CustledgerRec.FieldCaption("Currency Code") + ',' +
-                CustledgerRec.FieldCaption("Original Amount") + ',' +
-                CustledgerRec.FieldCaption("Amount (LCY)") + ',' +
-                CustledgerRec.FieldCaption("Bal. Account No.") + ',' +
-                CustledgerRec.FieldCaption("Remaining Amount") + ',' +
-                CustledgerRec.FieldCaption("Remaining Amt. (LCY)") + ',' +
-                CustledgerRec.FieldCaption(Open);
-        OutStream.WriteText(Line);
-
-        // Write the data (rows) to the CSV file
-        if CustledgerRec.FindSet() then
-            repeat
-                Line := Format(CustledgerRec."Entry No.") + ',' +
-                        Format(CustledgerRec."Posting Date") + ',' +
-                        Format(CustledgerRec."Document Type") + ',' +
-                        Format(CustledgerRec."Document No.") + ',' +
-                        Format(CustledgerRec."Customer No.") + ',' +
-                        Format(CustledgerRec."Customer Name") + ',' +
-                        Format(CustledgerRec.Description) + ',' +
-                        Format(CustledgerRec."Currency Code") + ',' +
-                        Format(CustledgerRec."Original Amount") + ',' +
-                        Format(CustledgerRec."Amount (LCY)") + ',' +
-                        Format(CustledgerRec."Bal. Account No.") + ',' +
-                        Format(CustledgerRec."Remaining Amount") + ',' +
-                        Format(CustledgerRec."Remaining Amt. (LCY)") + ',' +
-                        Format(CustledgerRec.Open);
-                OutStream.WriteText(Line);
-            until CustledgerRec.Next() = 0;
-
-        // Create an InStream from the TempBlob after writing is complete
+        OutStream.WriteText(TextBuilder.ToText());
         TempBlob.CreateInStream(InStream);
+        DownloadFromStream(InStream, '', '', '', FileName);
+
+
 
         // Download the CSV file
-        DownloadFromStream(InStream, '', '', CSVFileName, FileName);
     end;
 }
+
 ```

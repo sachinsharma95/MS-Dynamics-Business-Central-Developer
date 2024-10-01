@@ -35,23 +35,10 @@ pageextension 50709 "Export Customer led to Excel" extends "Customer Ledger Entr
         // Add changes to page actions here
     }
 
-    local procedure ExportCustomeledger_Excel()
-    var
-        CustomLedgerRec: Record "Cust. Ledger Entry";
-        TempExcelBuffer: Record "Excel Buffer" temporary;
-        CustomeLedgerLabel: Label 'Custom Ledger Entries';
-        ExcelFilename: Label 'Customer LadgerEntries %1_%2';
-
-
-    begin
-        TempExcelBuffer.Reset();
-        TempExcelBuffer.DeleteAll();
-        // 
-        TempExcelBuffer.NewRow();
+    
 
 
 
-    end;
 }
 ```
 

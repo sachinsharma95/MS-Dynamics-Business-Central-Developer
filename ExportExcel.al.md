@@ -55,7 +55,8 @@ pageextension 50709 "Export Customer led to Excel" extends "Customer Ledger Entr
 }
 ```
 
-## Export the Excel Login Using the Excel Buffer .
+## Export the Excel Logic  Using the Excel Buffer .
+Note It is written in the codeunit
 
 ```al
 

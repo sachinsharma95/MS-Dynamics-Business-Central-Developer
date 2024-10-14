@@ -1,0 +1,75 @@
+The `CalculateDays` procedure is designed to find the total number of days, working days (Monday to Friday), and non-working days (weekends) between two dates. Here’s a breakdown of how it works in a simpler way:
+
+### 1. **Variables Initialization**
+- `TotalDays`: Keeps track of the total number of days between the two dates.
+- `WorkingDays`: Counts only the days that are Monday to Friday (working days).
+- `NonWorkingDays`: Counts the weekend days (Saturday and Sunday).
+
+### 2. **Loop Through Dates**
+- **Starting from the first date** (`StartDate`), the program checks each day one by one until it reaches the **end date** (`EndDate`).
+- For each day:
+  - **TotalDays** is increased by 1.
+  - The program checks what day of the week it is using the `Date2DWY` function:
+    - If the day is **Monday to Friday** (any day except Saturday or Sunday), it adds 1 to the **WorkingDays** counter.
+    - If the day is **Saturday or Sunday**, it adds 1 to the **NonWorkingDays** counter.
+  
+- After processing each day, it moves to the **next day**.
+
+### 3. **Stop the Loop**
+- The loop keeps running until the current date is beyond the **EndDate**.
+
+### 4. **Display Results**
+- When the loop finishes, it displays a message showing:
+  - Total number of days.
+  - Total number of working days (Monday-Friday).
+  - Total number of non-working days (weekends).
+
+### Code Walkthrough in Simple Terms
+
+```al
+procedure CalculateDays(StartDate: Date; EndDate: Date)
+var
+    CurrentDate: Date;        // The date we're currently checking
+    TotalDays: Integer;       // Counter for all the days
+    WorkingDays: Integer;     // Counter for working days (Mon-Fri)
+    NonWorkingDays: Integer;  // Counter for weekends (Sat, Sun)
+begin
+    // Start with all counters at 0
+    TotalDays := 0;
+    WorkingDays := 0;
+    NonWorkingDays := 0;
+
+    // Begin with the first date
+    CurrentDate := StartDate;
+    
+    // Loop through each day from StartDate to EndDate
+    repeat
+        TotalDays += 1;  // Increase total day count for each day
+
+        // Check if it's a weekday (Mon-Fri)
+        if not (Date2DWY(CurrentDate, 1) in [1, 7]) then
+            WorkingDays += 1  // If it's Mon-Fri, increase working day count
+        else
+            NonWorkingDays += 1;  // If it's Sat or Sun, increase non-working day count
+
+        // Move to the next day
+        CurrentDate := CurrentDate + 1;
+    until CurrentDate > EndDate;  // Stop when we pass the EndDate
+
+    // Show the result
+    Message('Total Days: %1, Working Days: %2, Non-Working Days: %3', TotalDays, WorkingDays, NonWorkingDays);
+end;
+```
+
+### Example:
+- If you run this procedure for dates from **1st Oct 2024** to **7th Oct 2024**:
+  - **Total Days** will be 7.
+  - **Working Days** will be 5 (because Monday to Friday are working days).
+  - **Non-Working Days** will be 2 (Saturday and Sunday).
+
+### Key Points:
+- **TotalDays** counts every day between the start and end.
+- **WorkingDays** counts only Monday to Friday.
+- **NonWorkingDays** counts weekends.
+
+I hope this simplified explanation helps! Let me know if you have more questions!
